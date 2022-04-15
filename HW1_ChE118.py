@@ -45,6 +45,8 @@ plot.plotData(width=6,height=6)
 #Regression
 plot.plotLRegLines(width=0.1)
 plot.printAllRSquared()
+
+
 #Plot Parameters 
 plot.setAxisLabels(labels[0], labels[1], xpadding=5, ypadding=5)
 # plot.setTicProps()

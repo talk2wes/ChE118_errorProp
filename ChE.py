@@ -140,9 +140,15 @@ class ChEplot:
 				if self.dataLabels is None: print("Error_1")	
 				print( f"{rStr:<15}{self.dataLabels[fn-self.numDataVars]:<30}{'with respect to':<20}{self.dataLabels[var]:<10}")
 	
-	def confInterv(self):
+	def confInterv(self, n=1):
 		self.lowerBound_CI = []
 		self.upperBound_CI = []
+		for fn in range(self.numDataVars, self.numDataSets): 
+			x_bar , stdDev = np.mean(self.data[fn]) ,np.std(self.data[fn])
+			SE = stdDev / math.sqrt(self.num)
+			DoF = n
+			stats.t.ppf(q=0.05, ))
+			scipy.stats.t.ppf(q=.05,df=22)
 
 	
 	#Plot: Setters
