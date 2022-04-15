@@ -59,8 +59,6 @@ class ChEplot:
 			,"\n",self.numDataSets
 			,"\n",self.data
 			,"\n",self.fxns2plot)
-
-
 		pass
 
 	def	printData(self):
@@ -89,6 +87,9 @@ class ChEplot:
 		self.numDataVars = vars
 		self.numDataSets = len(self.data)
 		self.numDataFns = self.numDataSets - self.numDataVars
+		
+	def setLRegLineColors(self, colors=[]):
+		self.LRegLineColors = colors
 
 	def setIndepVars(self, vars):
 		"Vars are the first arrays in the self.data matrix"
@@ -127,9 +128,6 @@ class ChEplot:
 		x = x.reshape((-1,1))
 		y_reg = LinearRegression().fit(x,y)
 		return y_reg.score(x,y)
-		
-	def setLRegLineColors(self, colors=[]):
-		self.LRegLineColors = colors
 
 	def printAllRSquared(self, precision=5):
 		for fn in range(self.numDataVars, self.numDataSets):
