@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import matplotlib.font_manager as fm
 from sklearn.linear_model import LinearRegression
+from scipy import stats 
 
 class ChEplot:
 	def __init__(self):
@@ -139,7 +140,10 @@ class ChEplot:
 				if self.dataLabels is None: print("Error_1")	
 				print( f"{rStr:<15}{self.dataLabels[fn-self.numDataVars]:<30}{'with respect to':<20}{self.dataLabels[var]:<10}")
 	
-	# def confInterv(self)
+	def confInterv(self):
+		self.lowerBound_CI = []
+		self.upperBound_CI = []
+
 	
 	#Plot: Setters
 	def setFxns2Plot(self, fxns):
