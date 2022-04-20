@@ -58,8 +58,7 @@ for plotData in plots:
 	# plot.showPlot()
 	temp = folder + str(i) + '_' + savePlotAs
 	plot.savePlot(filename=temp,_dpi=600)
-	print("Plot SAVED as ", temp)
-	print("\n\n")
+	print("\tPlot SAVED as ", temp)
 	plot.close()
 	i += 1
 

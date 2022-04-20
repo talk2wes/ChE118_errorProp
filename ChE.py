@@ -122,26 +122,17 @@ class ChEplot:
 			else:
 				self.figure.axis[0].plot(x,y,'.',label=lbl)
 
-	def plotLRegLines(self, width=0.5, style='-', color='b'):
-		# for var in range(0, self.numDataVars):
-		# 	for fn in range(self.numDataVars, self.numDataSets):
-		# 		if var not in self.fxns2plot:
-		# 			continue
-		# 		if fn not in self.fxns2plot:
-		# 			continue
+	def plotLRegLines(self, width=0.5, style='-'):
 		var = self.fxns2plot[0]	
 		fxns = self.fxns2plot[1:] 
 		for fn in fxns:
-			# print("LR for ", fn, "\nvar = ", var)
-			# print(self.data[var])
-			# print(self.data[fn])
 			m, b = np.polyfit(self.data[var],self.data[fn],1)
 			x = np.linspace(min(self.data[var]), max(self.data[var]), num=len(self.data[var]))
 			y = m * x + b
 			txt1 = "LinReg line for y = " + self.dataLabels[fn]
 			txt2 = "and x = " + self.dataLabels[var]
-			txt3 = "\ty = (%.4f" % m + ")x + (%.4f" % b + ")" 
-			txt4 = "\tR^2 = %.4f" % ChEplot.rSquared(self.data[var], self.data[fn])
+			txt3 = "y = (%.4f" % m + ")x + (%.4f" % b + ")" 
+			txt4 = "R^2 = %.4f" % ChEplot.rSquared(self.data[var], self.data[fn])
 			print( f"{txt1:<35}{txt2:<30}{txt3:>20}{txt4:>20}")
 			if self.dataColors is None:
 				self.figure.axis[0].plot(x, y, \
@@ -176,7 +167,7 @@ class ChEplot:
 				rStr = rStr % rSquared
 				if rStr is None: print("Error_0")	
 				if self.dataLabels is None: print("Error_1")	
-				print( f"{rStr:<25}{self.dataLabels[fn-self.numDataVars]:<20}{'with respect to':<20}{self.dataLabels[var]:<10}")
+				print( f"{rStr:<25}{self.dataLabels[fn-self.numDataVars]:<20}{'with respect to':<20}{self.dataLabels[var]:>10}")
 	
 	#COMPLETE ME
 	def confInterv(self, n=1):
