@@ -15,33 +15,53 @@ customColors = None
 customYLabel = None #"poop" 
 # First int is x-axis, next int's are the functions to plot w/ respect to x on
 # the same plot 
-dataSets2Plot = [1,2,3] 
+
+plots = [	[3, 1],
+			[0, 3],
+			[2, 3],
+			[1, 3, 0, 2] 
+			]
+
+YLabels = None
+
+YLabels = [	"Poop1",
+			"poop2",
+			"poop3",
+			"poop4"
+			] 
 
 
-
-#  Create Plotting Object: LOAD A LABELED CSV FILE
-plot = ChE.ChEplot()
-plot.loadCSV(_filename, labels, indepVars=1, skip=1)
-#Set Data
-plot.setDataLabel(labels)
-#Plotting
-plot.setDataColors(customColors)
-plot.setFxns2Plot(dataSets2Plot)
-plot.plotData(width=6,height=6)
-#Statistics & Regression
-plot.plotLRegLines(width=0.5)
-# plot.printAllRSquared()
-#Plot Parameters 
-xaxisLabel = labels[dataSets2Plot[0]] #Don't Change
-yaxisLabel = customYLabel if customYLabel else labels[dataSets2Plot[1]]
-plot.setAxisLabels(xaxisLabel, yaxisLabel, xpadding=5, ypadding=5)
-plot.setTicProps()
-# plot.setNumTics(delta_x=1.0, delta_y=1.0, x_subTics=3, y_subTics=3)
-plot.showLegend()
-plot.changeFont()
-#Presentation
-plot.showPlot()
-plot.savePlot(filename=savePlotAs,_dpi=600)
+i = 0
+for plotData in plots:
+	# print(plotData)
+	#  Create Plotting Object: LOAD A LABELED CSV FILE
+	plot = ChE.ChEplot()
+	plot.loadCSV(_filename, labels, indepVars=1, skip=1)
+	#Set Data
+	plot.setDataLabel(labels)
+	#Plotting
+	plot.setDataColors(customColors)
+	plot.setFxns2Plot(plotData)
+	plot.plotData(width=6,height=6)
+	#Statistics & Regression
+	plot.plotLRegLines(width=0.5)
+	# plot.printAllRSquared()
+	#Plot Parameters 
+	xaxisLabel = labels[plotData[0]] #Don't Change
+	yaxisLabel = YLabels[i] if YLabels else labels[plotData[1]]
+	plot.setAxisLabels(xaxisLabel, yaxisLabel, xpadding=5, ypadding=5)
+	plot.setTicProps()
+	# plot.setNumTics(delta_x=1.0, delta_y=1.0, x_subTics=3, y_subTics=3)
+	plot.showLegend()
+	# plot.changeFont()
+	#Presentation
+	# plot.showPlot()
+	temp = folder + str(i) + '_' + savePlotAs
+	plot.savePlot(filename=temp,_dpi=600)
+	print("Plot SAVED as ", temp)
+	print("\n\n")
+	plot.close()
+	i += 1
 
 # def	saveManyPlots(_dataSets: list):
 # 	for i in range(0, len(_dataSets)):
