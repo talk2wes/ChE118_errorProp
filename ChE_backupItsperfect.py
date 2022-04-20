@@ -6,13 +6,12 @@ import numpy as np
 import matplotlib.font_manager as fm
 from sklearn.linear_model import LinearRegression
 from scipy import stats 
-import random 
 
 class ChEplot:
 	def __init__(self):
 		self.figure=None
 		self.dataLabels=None
-		self.dataColors =None
+		self.fnLabels=None
 		#Counting Elements
 		self.numDataVars=None
 		self.numDataFns=None
@@ -35,9 +34,6 @@ class ChEplot:
 
 
 			#Data 
-	def loadLabels(self):
-		pass
-
 	def loadCSV(self, filename: str, names: list, indepVars, skip=0):
 		"""Loads each column of data from the CSV file into a row of a numpy
 	 	array stored in self.data
@@ -51,7 +47,7 @@ class ChEplot:
 		self.numDataSets = len(self.data) 
 		self.numDataFns = self.numDataSets - self.numDataVars
 	
-	def setData(self, data: list, vars=1):
+	def setData(self, data: list, vars=1, ):
 		"Replaces Data and performs same operations as loadCSV"
 		self.data = data
 		self.numDataVars = vars
@@ -64,6 +60,7 @@ class ChEplot:
 		print( 
 			"\n",self.figure
 			,"\n",self.dataLabels
+			,"\n",self.fnLabels
 			,"\n",self.numDataVars
 			,"\n",self.numDataFns
 			,"\n",self.numDataSets
@@ -102,54 +99,37 @@ class ChEplot:
 		self.setIndepVars = vars
 
 	#Plotters
-	def plotData(self, width, height):
+	def plotData(self, width, height, fxns2graph=None):
 		self.figure = plt.figure(figsize=(width, height))
 		L, B, W, H = [0.15, 0.1, 0.80, 0.85]
 		self.figure.axis = []
 		self.figure.axis.append(self.figure.add_axes([L, B, W, H]))
 		#find a way to exclude data
-		# for var in range(0, self.numDataVars):
-		var = self.fxns2plot[0]
-		for fn in self.fxns2plot[1:]:
-			x = self.data[var]
-			y = self.data[fn]
-			#LOOK
-			lbl = self.dataLabels[fn]
-			# random_color=list(np.random.choice(range(255),size=3))
-			if self.dataColors is not None:
-				clr = self.dataColors[fn]
-				self.figure.axis[0].plot(x,y,'.',label=lbl,color=clr)
-			else:
-				self.figure.axis[0].plot(x,y,'.',label=lbl)
-
+		for var in range(0, self.numDataVars):
+			for fn in range(self.numDataVars, self.numDataSets):
+				if var not in self.fxns2plot:
+					continue
+				if fn not in self.fxns2plot:
+					continue
+				print("plot passed")
+				print(self.fxns2plot, "\n", var, "\n", fn)
+				if self.fxns2plot is not None:
+					if self.fxns2plot[fn] == False:
+						continue
+				x = self.data[var]
+				y = self.data[fn]
+				lbl = self.fnLabels[fn - self.numDataVars]
+				clr = self.dataColors[fn - self.numDataVars]
+				self.figure.axis[var].plot(x,y,'.',label=lbl,color=clr)
+	
 	def plotLRegLines(self, width=0.5, style='-', color='b'):
-		# for var in range(0, self.numDataVars):
-		# 	for fn in range(self.numDataVars, self.numDataSets):
-		# 		if var not in self.fxns2plot:
-		# 			continue
-		# 		if fn not in self.fxns2plot:
-		# 			continue
-		var = self.fxns2plot[0]	
-		fxns = self.fxns2plot[1:] 
-		for fn in fxns:
-			# print("LR for ", fn, "\nvar = ", var)
-			# print(self.data[var])
-			# print(self.data[fn])
-			m, b = np.polyfit(self.data[var],self.data[fn],1)
-			x = np.linspace(min(self.data[var]), max(self.data[var]), num=len(self.data[var]))
-			y = m * x + b
-			txt1 = "LinReg line for y = " + self.dataLabels[fn]
-			txt2 = "and x = " + self.dataLabels[var]
-			txt3 = "\ty = (%.4f" % m + ")x + (%.4f" % b + ")" 
-			txt4 = "\tR^2 = %.4f" % ChEplot.rSquared(self.data[var], self.data[fn])
-			print( f"{txt1:<35}{txt2:<30}{txt3:>20}{txt4:>20}")
-			if self.dataColors is None:
-				self.figure.axis[0].plot(x, y, \
-					linewidth=width ,linestyle=style)
-			else:
-				self.figure.axis[0].plot(x, y, \
-					color=self.dataColors[fn], \
-					linewidth=width ,linestyle=style)
+		for var in range(0, self.numDataVars):
+			for fn in range(self.numDataVars, self.numDataSets):
+				m, b = np.polyfit(self.data[0],self.data[fn],1)
+				y = (m * self.data[0]) + b
+				self.figure.axis[var].plot(self.data[0], y, \
+					color=self.LRegLineColors[fn-self.numDataVars], \
+						linewidth=width ,linestyle=style)
 	
 	def plotErrorBars(self):
 		pass
@@ -161,23 +141,16 @@ class ChEplot:
 		y_reg = LinearRegression().fit(x,y)
 		return y_reg.score(x,y)
 
-	def printAllRSquared(self, precision=5, vars=None, fxns=None):
-		if vars is None:
-			vars = range(0, self.numDataSets)
-		if fxns is None:
-			fxns = range(0, self.numDataSets)
- 
-		for fn in fxns:
-			for var in vars:
-				if fn == var: 
-					continue
+	def printAllRSquared(self, precision=5):
+		for fn in range(self.numDataVars, self.numDataSets):
+			for var in range(0, self.numDataVars):
 				rSquared = ChEplot.rSquared(self.data[0],self.data[fn])
 				rStr = "R^2 = %1." + str(precision) + "f" 
 				rStr = rStr % rSquared
 				if rStr is None: print("Error_0")	
 				if self.dataLabels is None: print("Error_1")	
-				print( f"{rStr:<25}{self.dataLabels[fn-self.numDataVars]:<20}{'with respect to':<20}{self.dataLabels[var]:<10}")
-	
+				print( f"{rStr:<15}{self.dataLabels[fn-self.numDataVars]:<30}{'with respect to':<20}{self.dataLabels[var]:<10}")
+
 	#COMPLETE ME
 	def confInterv(self, n=1):
 		self.lowerBound_CI = []
@@ -189,6 +162,7 @@ class ChEplot:
 			stats.t.ppf(q=0.05,)
 			scipy.stats.t.ppf(q=.05,df=22)
 
+
 	
 	#Plot: Setters
 	def setFxns2Plot(self, fxns):
@@ -196,16 +170,11 @@ class ChEplot:
 
 	def setDataStyles(self, styles: list):	
 		self.lineStyles = styles
-	def	setDataColors(self, colors=None): 	
-		colors = []
-		for i in range (len(self.data)):
-			color = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-			colors.append(color)
-			# print(color)
-			# print(colors)
-
+	def	setDataColors(self, colors: list): 	
 		self.dataColors = colors 
 		self.setLRegLineColors(colors)
+	def setFnLabels(self, labels: list[str]):	
+		self.fnLabels = labels
 
 	def setAxisLabels(self, x: str, y:str, indepVar=0, xpadding=5, ypadding=5):
 		self.figure.axis[indepVar].set_xlabel(x,labelpad=xpadding)
@@ -225,9 +194,7 @@ class ChEplot:
 
 	#Plot: Features	
 	def showLegend(self, x=0.01, y=0.01, width=1, height=1, _loc='lower left', frame=True,_fontSize=10):
-		# plt.legend(bbox_to_anchor=(x,y, width, height), loc=_loc, frameon=frame, fontsize=_fontSize)
-		plt.legend(frameon=frame, fontsize=_fontSize)
-
+		plt.legend(bbox_to_anchor=(x,y, width, height), loc=_loc, frameon=frame, fontsize=_fontSize)
 	
 	def changeFont(self, font='Alvenir', size=10, linewidth=0.9):
 		mpl.rcParams['font.family'] = font

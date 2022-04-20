@@ -6,42 +6,43 @@ import numpy as np
 #Define Data
 labels = ["Pressure [Bar]", "Signal [Volts]", "Pressure_xError [bar]",\
 		"Signal_yError [Volts]" ]
-fxns2Plot = [ 0, 1]  #first number is index of domain/independent var
-fname = "CSV/data_che118_hw.csv"
+fxns2Plot = [ 0, 2]  #first number is the 'x-axis' 
+fname = "x.csv"
 colors = ['#89CFF0','#800020','#301934','#301934']
-# colors = None 
-xaxisLabel = labels[fxns2Plot[0]]
-yaxisLabel = labels[1] 
+xaxisLabel = labels[fxns2Plot[0]] #Don't Change
+yaxisLabel = labels[fxns2Plot[1]]
+saveFileAs = "log(Re)_vs_log(f).png"
 
-#Create Plotting Object
+#Create Plotting Object: LOAD A LABELED CSV FILE
 plot = ChE.ChEplot()
-
+plot.loadCSV(fname, labels, indepVars=1, skip=1)
+lbl = np.loadtxt(fname, unpack=True, delimiter=',',dtype=str)	
+lbl = lbl[ : , 0]
+print("LABEL IS ", lbl)
 #FIXING THE DATA_____________________________________
-plot.loadCSV(fname, labels, indepVars=1, skip=11)
-print("\nwhat the original data looked like")
-plot.printData()
-#Gotta fix the data, it's scrambled from the copy/paste
-#	->Each Row vector of the orig. matrix is listed in order, in the first col
-#	of the CSV file
-x = []
-y = []
-x_err = []
-y_err = []
-orig = plot.data
+# print("\nwhat the original data looked like")
+# plot.printData()
+# #Gotta fix the data, it's scrambled from the copy/paste
+# #	->Each Row vector of the orig. matrix is listed in order, in the first col
+# #	of the CSV file
+# x = []
+# y = []
+# x_err = []
+# y_err = []
+# orig = plot.data
 
-i = 0
-while(i < len(plot.data)):
-	x.append(orig[i]); i += 1	
-	y.append(orig[i]); i += 1
-	x_err.append(orig[i]); i += 1
-	y_err.append(orig[i]); i += 1
-plot.setData([x, y, x_err, y_err])
-print("\nwhat the corrected data looks like\n")
-plot.printData()
-#FIXING THE DATA_____________________________________
+# i = 0
+# while(i < len(plot.data)):
+# 	x.append(orig[i]); i += 1	
+# 	y.append(orig[i]); i += 1
+# 	x_err.append(orig[i]); i += 1
+# 	y_err.append(orig[i]); i += 1
+# plot.setData([x, y, x_err, y_err])
+# print("\nwhat the corrected data looks like\n")
+# plot.printData()
+# #FIXING THE DATA_____________________________________
 
 #Set Data
-plot.setData(np.array([x, y, x_err, y_err]), vars = 1)
 plot.setDataLabel(labels)
 #Plotting
 if colors is not None:
@@ -61,7 +62,7 @@ plot.showLegend()
 plot.changeFont()
 #Presentation
 plot.showPlot()
-plot.savePlot(filename="log(Re)_vs_log(f).png",_dpi=600)
+plot.savePlot(filename=saveFileAs,_dpi=600)
 
 
 
@@ -69,7 +70,7 @@ plot.savePlot(filename="log(Re)_vs_log(f).png",_dpi=600)
 # #Data
 # plot.loadCSV('logRe_logf.csv', dataNames, indepVars=1)
 # #Plotting
-# plot.setFnLabels(fnLabels)
+# # plot.setFnLabels(fnLabels)
 # plot.setDataColors(['#89CFF0','#800020','#301934'])
 # plot.plotData(width=6,height=6)
 # #Regression
